@@ -25,6 +25,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.checkerframework.checker.optional.qual.Present;
+import org.checkerframework.framework.qual.EnsuresQualifierIf;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
@@ -653,6 +656,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
     /**
      * @return Returns true if the shape is a {@link MemberShape} shape.
      */
+    @EnsuresQualifierIf(result = true, expression = "this.asMemberShape()", qualifier = Present.class)
     public final boolean isMemberShape() {
         return getType() == ShapeType.MEMBER;
     }

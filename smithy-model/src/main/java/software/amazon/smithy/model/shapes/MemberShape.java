@@ -16,6 +16,8 @@
 package software.amazon.smithy.model.shapes;
 
 import java.util.Optional;
+
+import org.checkerframework.dataflow.qual.Pure;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.Trait;
@@ -61,7 +63,7 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
     }
 
     @Override
-    public Optional<MemberShape> asMemberShape() {
+    public @Pure Optional<MemberShape> asMemberShape() {
         return Optional.of(this);
     }
 
