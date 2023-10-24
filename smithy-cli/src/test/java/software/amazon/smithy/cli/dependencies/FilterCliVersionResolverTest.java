@@ -52,17 +52,17 @@ public class FilterCliVersionResolverTest {
             @Override
             public List<ResolvedArtifact> resolve() {
                 return Arrays.asList(
-                    ResolvedArtifact.fromNode("software.amazon.smithy:smithy-model:1.25.0", getNodeForPath("/a")),
-                    ResolvedArtifact.fromNode("software.amazon.smithy:smithy-utils:1.25.0", getNodeForPath("/b")),
-                    ResolvedArtifact.fromNode("software.amazon.smithy:smithy-other:1.25.0", getNodeForPath("/c")),
-                    ResolvedArtifact.fromNode("software.amazon.foo:foo-other:1.0.0", getNodeForPath("/d"))
+                    ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-model:1.25.0", getNodeForPath("/a")),
+                    ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-utils:1.25.0", getNodeForPath("/b")),
+                    ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-other:1.25.0", getNodeForPath("/c")),
+                    ResolvedArtifact.fromCoordinateNode("software.amazon.foo:foo-other:1.0.0", getNodeForPath("/d"))
                 );
             }
         });
 
         assertThat(filter.resolve(), contains(
-            ResolvedArtifact.fromNode("software.amazon.smithy:smithy-other:1.25.0", getNodeForPath("/c")),
-            ResolvedArtifact.fromNode("software.amazon.foo:foo-other:1.0.0", getNodeForPath("/d"))
+            ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-other:1.25.0", getNodeForPath("/c")),
+            ResolvedArtifact.fromCoordinateNode("software.amazon.foo:foo-other:1.0.0", getNodeForPath("/d"))
         ));
     }
 
@@ -81,8 +81,7 @@ public class FilterCliVersionResolverTest {
 
             @Override
             public List<ResolvedArtifact> resolve() {
-                return ListUtils.of(ResolvedArtifact.fromNode("software.amazon.smithy:smithy-model:1.27.0",
-                        getNodeForPath("/a")));
+                return ListUtils.of(ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-model:1.27.0", getNodeForPath("/a")));
             }
         });
 
@@ -92,7 +91,7 @@ public class FilterCliVersionResolverTest {
     private static Node getNodeForPath(String pathStr) {
         return Node.objectNodeBuilder()
                 .withMember("path", pathStr)
-                .withMember("shaSum", pathStr)
+                .withMember("sha1", "sum")
                 .build();
     }
 }

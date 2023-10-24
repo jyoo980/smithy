@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.math.BigDecimal;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.Node.NonNumericFloat;
 import software.amazon.smithy.model.node.NumberNode;
@@ -31,6 +30,7 @@ import software.amazon.smithy.model.validation.Severity;
 class RangeTraitPlugin implements NodeValidatorPlugin {
     private static final String MEMBER = "Member";
     private static final String TARGET = "Target";
+    private static final String INVALID_RANGE = "InvalidRange";
 
     @Override
     public final void apply(Shape shape, Node value, Context context, Emitter emitter) {
@@ -57,40 +57,43 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
                 emitter.accept(node, getSeverity(context), String.format(
                         "Value provided for `%s` must be greater than or equal to %s, but found \"%s\"",
                         shape.getId(), trait.getMin().get(), node.getValue()),
-                        shape.isMemberShape() ? MEMBER : TARGET);
+                        shape.isMemberShape() ? MEMBER : TARGET,
+                        INVALID_RANGE);
             }
 
             if (trait.getMax().isPresent() && value.equals(NonNumericFloat.POSITIVE_INFINITY)) {
                 emitter.accept(node, getSeverity(context), String.format(
                         "Value provided for `%s` must be less than or equal to %s, but found \"%s\"",
                         shape.getId(), trait.getMax().get(), node.getValue()),
-                        shape.isMemberShape() ? MEMBER : TARGET);
+                        shape.isMemberShape() ? MEMBER : TARGET,
+                        INVALID_RANGE);
             }
         });
     }
 
     protected void check(Shape shape, Context context, RangeTrait trait, NumberNode node, Emitter emitter) {
-        Number number = node.getValue();
-        BigDecimal decimal = number instanceof BigDecimal
-                ? (BigDecimal) number
-                : new BigDecimal(number.toString());
-
         trait.getMin().ifPresent(min -> {
-            if (decimal.compareTo(new BigDecimal(min.toString())) < 0) {
-                emitter.accept(node, getSeverity(node, context), String.format(
-                        "Value provided for `%s` must be greater than or equal to %s, but found %s",
-                        shape.getId(), min, number),
-                        shape.isMemberShape() ? MEMBER : TARGET);
-            }
+            node.asBigDecimal().ifPresent(decimal -> {
+                if (decimal.compareTo(min) < 0) {
+                    emitter.accept(node, getSeverity(node, context), String.format(
+                                           "Value provided for `%s` must be greater than or equal to %s, but found %s",
+                                           shape.getId(), min, decimal),
+                                   shape.isMemberShape() ? MEMBER : TARGET,
+                                   INVALID_RANGE);
+                }
+            });
         });
 
         trait.getMax().ifPresent(max -> {
-            if (decimal.compareTo(new BigDecimal(max.toString())) > 0) {
-                emitter.accept(node, getSeverity(node, context), String.format(
-                        "Value provided for `%s` must be less than or equal to %s, but found %s",
-                        shape.getId(), max, number),
-                        shape.isMemberShape() ? MEMBER : TARGET);
-            }
+            node.asBigDecimal().ifPresent(decimal -> {
+                if (decimal.compareTo(max) > 0) {
+                    emitter.accept(node, getSeverity(node, context), String.format(
+                                           "Value provided for `%s` must be less than or equal to %s, but found %s",
+                                           shape.getId(), max, decimal),
+                                   shape.isMemberShape() ? MEMBER : TARGET,
+                                   INVALID_RANGE);
+                }
+            });
         });
     }
 

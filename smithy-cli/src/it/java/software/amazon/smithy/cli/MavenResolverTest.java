@@ -101,7 +101,7 @@ public class MavenResolverTest {
                         assertThat(result.getOutput(), containsString("HttpAuthenticator - Authentication succeeded"));
                     });
         } finally {
-            if(mockServer!=null) {
+            if (mockServer!=null) {
                 mockServer.stop();
             }
         }
@@ -156,7 +156,7 @@ public class MavenResolverTest {
             ObjectNode node = Node.parse(cacheContents).expectObjectNode();
             ObjectNode artifacts = node.expectObjectMember("artifacts");
             String location = artifacts.expectObjectMember("software.amazon.smithy:smithy-aws-traits:"
-                                                      + TEST_VERSION).expectStringMember("path").getValue();
+                    + TEST_VERSION).expectStringMember("path").getValue();
 
             // Set the lastModified of the JAR to the current time, which is > than the time of the config file,
             // so the cache is invalided.

@@ -1,5 +1,89 @@
 # Smithy Changelog
 
+## 1.40.0 (2023-10-16)
+
+### Features
+
+* Added new protocol tests for the `restXml` protocol, which assert request/response behaviors for string payloads. ([#2007](https://github.com/smithy-lang/smithy/pull/2007))
+* Added new package, `smithy-smoke-test-traits`, which defines the traits for smoke tests. This package contains the smithy model definitions of said traits, their java implementations, and unit tests. ([#2005](https://github.com/smithy-lang/smithy/pull/2005))
+* Added auth-scheme validator that runs for SigV4 sub-schemes as part of the AWS rule-set in `smithy-rules-engine`. ([#2000](https://github.com/smithy-lang/smithy/pull/2000))
+* Added `AccountId` and `CredentialScope` parameters for AWS-specific endpoint rules in `smithy-rules-engine`. ([#1993](https://github.com/smithy-lang/smithy/pull/1993))
+
+### Documentation
+
+* Added traits anchors for a few traits that were previously missing. ([#2008](https://github.com/smithy-lang/smithy/pull/2008))
+* Added `Smithy Examples` embedding to the [smithy.io](https://smithy.io) sidebar under `Project`. ([#2006](https://github.com/smithy-lang/smithy/pull/2006))
+* Added important notice for the `@contextParam` trait to clarify expected behavior of clients when `@required` is used on the same member.([#1999](https://github.com/smithy-lang/smithy/pull/1999))
+
+### Bug Fixes
+
+* Fixed missing source-locations in emitted events by `smithy-diff`. Previously, `N/A` would be displayed instead of the real location. ([#2001](https://github.com/smithy-lang/smithy/pull/2001))
+* Added missing method override in `smithy-rules-engine`. ([#1998](https://github.com/smithy-lang/smithy/pull/1998))
+* Fixed bug where properties of resource shapes were not being serialized in the IDL serializer. ([#1996](https://github.com/smithy-lang/smithy/pull/1996))
+* Fixed an issue with OpenAPI conversion not allowing multiple errors for a single status code with an opt-in that uses `oneOf` to de-conflict the errors. ([#1995](https://github.com/smithy-lang/smithy/pull/1995))
+
+## 1.39.1 (2023-09-26)
+
+### Bug Fixes
+
+* Fix several issues with validating `authSchemes` configurations for endpoints in the
+  `smithy-rules-engine` package for both AWS and non-AWS issues. ([#1990](https://github.com/smithy-lang/smithy/pull/1990))
+
+## 1.39.0 (2023-09-25)
+
+### Features
+
+* Refactored `smithy-rules-engine` significantly in an effort to improve validation, separate 
+  AWS and non-AWS concerns, add a specification, and more. General notes are provided in 
+  individual commit messages. The format of the rules documents have not changed, meaning a 
+  successful migration to the refactored codebase will involve no changes to code generated 
+  for an SDK client ([#1855](https://github.com/smithy-lang/smithy/pull/1855))
+* Added `Sha1` checksum to `ResolvedArtifacts` ([#1979](https://github.com/smithy-lang/smithy/pull/1979))
+* Relaxed `Content-Length` in unset union payloads protocol tests ([#1984](https://github.com/smithy-lang/smithy/pull/1984))
+
+### Documentation
+
+* Updated example by keeping operation list from previous examples ([#1981](https://github.com/smithy-lang/smithy/pull/1981))
+
+## 1.38.0 (2023-09-14)
+
+### Features
+
+* Updated auto-formatting to use line breaks for some properties ([#1939](https://github.com/smithy-lang/smithy/pull/1939))
+* Updated JSON-based AWS protocols to ignore the `__type` field when deserializing `union`s ([#1945](https://github.com/smithy-lang/smithy/pull/1945))
+* Added metadata key to `RemovedMetadata` diff events ([#1940](https://github.com/smithy-lang/smithy/pull/1940))
+* Improved equality comparison for `NumberNode` instances ([#1955](https://github.com/smithy-lang/smithy/pull/1955), [#1965](https://github.com/smithy-lang/smithy/pull/1965))
+* Added `--aut` as a shortcut for `--allow-unknown-traits` in the Smithy CLI ([#1950](https://github.com/smithy-lang/smithy/pull/1950))
+* Added a `--show` option to the Smithy CLI to include extra information like type, source location, and captured
+  variables. This deprecates the `--show-vars` option ([#1953](https://github.com/smithy-lang/smithy/pull/1953))
+* Added validation to emit warnings when a member has an HTTP trait applied in a context where it is ignored ([#1962](https://github.com/smithy-lang/smithy/pull/1962),
+  [#1969](https://github.com/smithy-lang/smithy/pull/1969))
+* Added validation to check the consistency of IAM resource names and ARN resource names ([#1954](https://github.com/smithy-lang/smithy/pull/1954))
+* Added a `RemoveInvalidDefaults` transform to remove `@default` traits when their values conflict with applied `@range`
+  traits ([#1964](https://github.com/smithy-lang/smithy/pull/1964))
+* Added an `allowConstraintErrors` property to the `@examples` trait for relaxing content validation requirements ([#1949](https://github.com/smithy-lang/smithy/pull/1949),
+  [#1968](https://github.com/smithy-lang/smithy/pull/1968))
+* Added several protocol tests for `@restXml` ([#1909](https://github.com/smithy-lang/smithy/pull/1909), [#1908](https://github.com/smithy-lang/smithy/pull/1908),
+  [#1574](https://github.com/smithy-lang/smithy/pull/1574))
+* Added several protocol tests for `@restJson1` ([#1908](https://github.com/smithy-lang/smithy/pull/1908))
+
+### Documentation
+
+* Clarified how trait values are provided in the IDL ([#1944](https://github.com/smithy-lang/smithy/pull/1944))
+* Added the `@length` trait to the specification's trait index ([#1952](https://github.com/smithy-lang/smithy/pull/1952))
+* Improved the ability to link to certain sections of the specification ([#1958](https://github.com/smithy-lang/smithy/pull/1958))
+* Clarified behavior of `@sigv4` and `@optionalAuth` ([#1963](https://github.com/smithy-lang/smithy/pull/1963), [#1971](https://github.com/smithy-lang/smithy/pull/1971))
+
+### Bug Fixes
+
+* Fixed diff event messages for `ChangedNullability` events ([#1972](https://github.com/smithy-lang/smithy/pull/1972))
+* Fixed an NPE when auto-formatting certain types of trait values ([#1942](https://github.com/smithy-lang/smithy/pull/1942))
+* Fixed an issue where exceptions thrown when creating traits were not emitted as validation events ([#1947](https://github.com/smithy-lang/smithy/pull/1947))
+* Fixed an issue validating timestamp members in nodes where a `@timestampFormat` trait was involved ([#1948](https://github.com/smithy-lang/smithy/pull/1948))
+* Fixed an issue where the `FlattenAndRemoveMixins` transform would not remove unused mixins ([#1951](https://github.com/smithy-lang/smithy/pull/1951))
+* Fixed a malformed request test for the `@restJson1` protocol ([#1959](https://github.com/smithy-lang/smithy/pull/1959))
+* Fixed an issue where `NonInclusiveTerms` validation events would be identical for different text paths. ([#1975](https://github.com/smithy-lang/smithy/pull/1975))
+
 ## 1.37.0 (2023-08-22)
 
 ### Features
